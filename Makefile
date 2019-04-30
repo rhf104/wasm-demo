@@ -1,5 +1,4 @@
 SOURCES=test.c
-JS=library.js
 OUT=test.wasm
 
 all: $(OUT)
@@ -7,9 +6,11 @@ all: $(OUT)
 $(OUT): $(SOURCES)
 	emcc -Os \
 	 -s SIDE_MODULE=1 \
-	 -s "EXPORTED_FUNCTIONS=['_hello']" \
+	 -s TOTAL_STACK=64KB \
+	 -s TOTAL_MEMORY=128KB \
+	 -s "EXPORTED_FUNCTIONS=['_argsByVal', '_editStr', '__malloc', \
+	 '_fib', '_alertTest']" \
 	 -o $@ $<
-#	emcc -Os --js-library $(JS) -o $@ $<
 
 clean:
 	rm $(OUT)
