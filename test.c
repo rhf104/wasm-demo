@@ -2,6 +2,7 @@
 #define MEM_PAGES 1
 
 extern void alert(char *msg);
+extern void debugger();
 
 unsigned long _strlen(const char *str) {
     int len = 0;
@@ -38,4 +39,20 @@ int fib(int n) {
 
 void alertTest(char *msg) {
     alert(msg);
+}
+
+int staticCount() {
+    static int count = 42;
+    count += 1;
+    return count;
+}
+
+void add(int *a) {
+    *a = *a + 1;
+}
+
+int stackAdd() {
+    int b = 0;
+    add(&b);
+    return 1 + b;
 }

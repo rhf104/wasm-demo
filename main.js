@@ -1,5 +1,5 @@
+const memory = new WebAssembly.Memory({initial: 1});
 window.onload = async function() {
-  const memory = new WebAssembly.Memory({initial: 2});
   const mem = new Uint8Array(memory.buffer);
   const {module, instance} = await WebAssembly.instantiateStreaming(
       fetch('test.wasm'),
@@ -12,6 +12,9 @@ window.onload = async function() {
           _alert: function(str) {
             alert(fromCStr(str));
           },
+          _debugger: function() {
+            debugger;
+          }
         },
       },
   );
@@ -32,12 +35,16 @@ window.onload = async function() {
   };
 
   const {
+    __post_instantiate,
     _argsByVal,
     _fib,
     __malloc,
     _editStr,
     _alertTest,
+    _staticCount,
+    _stackAdd
   } = instance.exports;
+  __post_instantiate();
 
   // stack tests
   const val = _argsByVal(1, 2);
@@ -52,6 +59,13 @@ window.onload = async function() {
   const retP = _editStr(msgP);
   const ret = fromCStr(retP);
   console.log(ret);
+
+  // static test
+  _staticCount();
+
+  // stack test
+  const sAdd = _stackAdd();
+  console.log(sAdd);
 
   // js function call
   _alertTest(msgP);
